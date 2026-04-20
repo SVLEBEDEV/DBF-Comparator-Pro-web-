@@ -18,5 +18,6 @@ backend/.env
 backend/local-dev.db
 backend/local-dev.sqlite
 frontend/.env
+.env.production
 tmp/
 storage/

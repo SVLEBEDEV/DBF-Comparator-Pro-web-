@@ -2,45 +2,87 @@
 
 ## Назначение
 
-Этот runbook описывает пилотное on-premise развёртывание `DBF Comparator Pro v2`, базовую диагностику и сценарий rollback.
+Этот runbook описывает первый production-like деплой `DBF Comparator Pro v2` на VPS и базовые действия по эксплуатации.
 
-## Подготовка
+Основной сценарий для первого запуска на Beget описан отдельно в:
 
-1. Установить Docker и Docker Compose plugin на сервере.
-2. Подготовить каталог проекта и volume для временного storage.
-3. Скопировать `backend/.env.example` в `backend/.env`.
-4. Скопировать `frontend/.env.example` в `frontend/.env` при необходимости смены API URL.
+- [project/beget-deploy.md](/Users/thelebedevs/DBF Comparator PRO v2/project/beget-deploy.md)
+
+## Что используется на сервере
+
+- `docker-compose.prod.yml`
+- `.env.production`
+- `infra/nginx/Dockerfile`
+- `infra/nginx/default.prod.conf.template`
 
 ## Первый запуск
 
-1. Выполнить `docker compose up --build -d`.
-2. Проверить `http://<host>:8080`.
-3. Проверить `http://<host>:8080/api/v1/health`.
-4. Проверить `http://<host>:8080/api/v1/ready`.
+1. Подключиться к VPS.
+2. Склонировать репозиторий в `/opt/dbf-comparator-pro`.
+3. Скопировать `.env.production.example` в `.env.production`.
+4. Заполнить пароль БД и IP/домен в `CORS_ORIGINS`.
+5. Выполнить:
 
-## Smoke-проверка
+```bash
+docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build
+```
 
-1. Загрузить два тестовых DBF.
-2. Дождаться статуса `completed`.
-3. Открыть preview по секциям.
-4. Скачать Excel-отчёт.
-5. Выполнить ручную очистку задания.
+## Проверка после запуска
 
-## Обновление
+1. Открыть `http://<server-ip>`.
+2. Проверить `http://<server-ip>/api/v1/health`.
+3. Проверить `http://<server-ip>/api/v1/ready`.
+4. Выполнить ручной smoke:
+   - загрузить два DBF;
+   - дождаться завершения проверки;
+   - открыть детали;
+   - скачать Excel-отчёт.
 
-1. Получить новую версию проекта.
-2. Выполнить `docker compose up --build -d`.
-3. Повторить smoke-проверку.
+## Обновление версии
+
+```bash
+cd /opt/dbf-comparator-pro
+git pull
+docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build
+```
+
+## Перезапуск
+
+```bash
+cd /opt/dbf-comparator-pro
+docker compose --env-file .env.production -f docker-compose.prod.yml restart
+```
+
+## Остановка
+
+```bash
+cd /opt/dbf-comparator-pro
+docker compose --env-file .env.production -f docker-compose.prod.yml down
+```
+
+## Логи
+
+```bash
+docker compose --env-file .env.production -f docker-compose.prod.yml logs proxy --tail=100
+docker compose --env-file .env.production -f docker-compose.prod.yml logs api --tail=100
+docker compose --env-file .env.production -f docker-compose.prod.yml logs worker --tail=100
+```
 
 ## Rollback
 
-1. Вернуть предыдущую ревизию проекта.
-2. Выполнить `docker compose up --build -d`.
-3. Проверить health/readiness.
+1. Перейти в каталог проекта.
+2. Вернуться на предыдущий коммит или тег.
+3. Выполнить повторную сборку:
 
-## Диагностика
+```bash
+docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build
+```
 
-- Проверить логи API: `docker compose logs api`.
-- Проверить логи worker: `docker compose logs worker`.
-- Проверить readiness: `curl http://localhost:8080/api/v1/ready`.
-- Проверить storage-каталог и свободное место.
+4. Повторить `health`, `ready` и ручной smoke.
+
+## Что важно не забыть
+
+- `.env.production` не коммитится в git;
+- пароль PostgreSQL должен быть заменён перед первым запуском;
+- первый этап может работать по IP и HTTP;
+- HTTPS и домен лучше делать вторым отдельным этапом, когда базовый деплой уже стабильно работает.
