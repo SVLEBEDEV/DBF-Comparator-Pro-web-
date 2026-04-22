@@ -119,6 +119,7 @@ export function ComparisonWorkspace() {
           : "Есть неуникальные ключи";
     const skippedValue = "—";
     const isStructureOnly = comparisonStatus?.structure_only ?? false;
+    const isFieldOrderCheckDisabled = !(comparisonStatus?.check_field_order ?? checkFieldOrder);
     const rowsMatch = summary ? file1Rows === file2Rows : null;
     const encodingsMatch = uploadResult ? file1Encoding === file2Encoding : null;
 
@@ -160,9 +161,14 @@ export function ComparisonWorkspace() {
       {
         id: "field_order",
         label: "Очередность полей",
-        value: String(summary?.field_order_mismatches_count ?? 0),
-        tone: (summary?.field_order_mismatches_count ?? 0) > 0 ? ("danger" as const) : ("positive" as const),
-        previewSection: "FIELD_ORDER",
+        value: isFieldOrderCheckDisabled ? skippedValue : String(summary?.field_order_mismatches_count ?? 0),
+        tone: isFieldOrderCheckDisabled
+          ? ("neutral" as const)
+          : (summary?.field_order_mismatches_count ?? 0) > 0
+            ? ("danger" as const)
+            : ("positive" as const),
+        skipped: isFieldOrderCheckDisabled,
+        previewSection: isFieldOrderCheckDisabled ? undefined : "FIELD_ORDER",
       },
       {
         id: "missing_fields",

@@ -1,0 +1,58 @@
+{
+  "case_id": "ТК4",
+  "notes": "Во втором файле отсутствуют поля FIELD2 и FIELD5, что также сдвигает порядок полей.",
+  "runs": [
+    {
+      "name": "structure-with-order",
+      "params": {
+        "key1": "KEY1",
+        "structure_only": true,
+        "check_field_order": true
+      },
+      "expected": {
+        "summary": {
+          "missing_fields_count": 2,
+          "extra_fields_count": 0,
+          "field_order_mismatches_count": 4,
+          "has_differences": true
+        },
+        "preview": {
+          "STRUCTURE": [
+            {
+              "field": "FIELD2",
+              "issue": "missing_in_file2",
+              "file": "file1"
+            },
+            {
+              "field": "FIELD5",
+              "issue": "missing_in_file2",
+              "file": "file1"
+            }
+          ],
+          "FIELD_ORDER": [
+            {
+              "position": 3,
+              "file1_field": "FIELD2",
+              "file2_field": "FIELD3"
+            },
+            {
+              "position": 4,
+              "file1_field": "FIELD3",
+              "file2_field": "FIELD4"
+            },
+            {
+              "position": 5,
+              "file1_field": "FIELD4",
+              "file2_field": ""
+            },
+            {
+              "position": 6,
+              "file1_field": "FIELD5",
+              "file2_field": ""
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

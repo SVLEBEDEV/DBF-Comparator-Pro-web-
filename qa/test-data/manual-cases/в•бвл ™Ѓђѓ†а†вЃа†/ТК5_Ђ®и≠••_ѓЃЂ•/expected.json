@@ -1,0 +1,73 @@
+{
+  "case_id": "ТК5",
+  "notes": "Во втором файле есть лишние поля NEWFIELD6 и NEWFIELD7, что влияет на очередность.",
+  "runs": [
+    {
+      "name": "structure-with-order",
+      "params": {
+        "key1": "KEY1",
+        "structure_only": true,
+        "check_field_order": true
+      },
+      "expected": {
+        "summary": {
+          "missing_fields_count": 0,
+          "extra_fields_count": 2,
+          "field_order_mismatches_count": 7,
+          "has_differences": true
+        },
+        "preview": {
+          "STRUCTURE": [
+            {
+              "field": "NEWFIELD6",
+              "issue": "extra_in_file2",
+              "file": "file2"
+            },
+            {
+              "field": "NEWFIELD7",
+              "issue": "extra_in_file2",
+              "file": "file2"
+            }
+          ],
+          "FIELD_ORDER": [
+            {
+              "position": 2,
+              "file1_field": "FIELD1",
+              "file2_field": "NEWFIELD6"
+            },
+            {
+              "position": 3,
+              "file1_field": "FIELD2",
+              "file2_field": "FIELD1"
+            },
+            {
+              "position": 4,
+              "file1_field": "FIELD3",
+              "file2_field": "FIELD2"
+            },
+            {
+              "position": 5,
+              "file1_field": "FIELD4",
+              "file2_field": "FIELD3"
+            },
+            {
+              "position": 6,
+              "file1_field": "FIELD5",
+              "file2_field": "FIELD4"
+            },
+            {
+              "position": 7,
+              "file1_field": "",
+              "file2_field": "FIELD5"
+            },
+            {
+              "position": 8,
+              "file1_field": "",
+              "file2_field": "NEWFIELD7"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

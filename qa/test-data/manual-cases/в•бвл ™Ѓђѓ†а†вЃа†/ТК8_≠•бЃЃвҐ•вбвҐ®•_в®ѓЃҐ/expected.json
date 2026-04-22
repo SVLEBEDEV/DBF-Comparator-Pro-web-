@@ -1,0 +1,71 @@
+{
+  "case_id": "ТК8",
+  "notes": "Поле KEY1 имеет разные типы, из-за чего все строки расходятся по ключам.",
+  "runs": [
+    {
+      "name": "default",
+      "params": {
+        "key1": "KEY1"
+      },
+      "expected": {
+        "summary": {
+          "type_mismatches_count": 1,
+          "missing_rows_count": 5,
+          "extra_rows_count": 5,
+          "has_differences": true
+        },
+        "preview": {
+          "TYPES": [
+            {
+              "field": "KEY1",
+              "file1_type": "N(20,0)",
+              "file2_type": "C(20,0)"
+            }
+          ],
+          "RECONCILIATION": [
+            {
+              "issue": "missing_in_file2",
+              "key": "1"
+            },
+            {
+              "issue": "missing_in_file2",
+              "key": "2"
+            },
+            {
+              "issue": "missing_in_file2",
+              "key": "3"
+            },
+            {
+              "issue": "missing_in_file2",
+              "key": "4"
+            },
+            {
+              "issue": "missing_in_file2",
+              "key": "5"
+            },
+            {
+              "issue": "extra_in_file2",
+              "key": "1"
+            },
+            {
+              "issue": "extra_in_file2",
+              "key": "2"
+            },
+            {
+              "issue": "extra_in_file2",
+              "key": "3"
+            },
+            {
+              "issue": "extra_in_file2",
+              "key": "4"
+            },
+            {
+              "issue": "extra_in_file2",
+              "key": "5"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

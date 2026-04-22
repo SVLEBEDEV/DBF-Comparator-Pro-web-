@@ -1,0 +1,36 @@
+{
+  "case_id": "ТК6",
+  "notes": "Поля FIELD2 и FIELD5 поменяны местами.",
+  "runs": [
+    {
+      "name": "structure-with-order",
+      "params": {
+        "key1": "KEY1",
+        "structure_only": true,
+        "check_field_order": true
+      },
+      "expected": {
+        "summary": {
+          "missing_fields_count": 0,
+          "extra_fields_count": 0,
+          "field_order_mismatches_count": 2,
+          "has_differences": true
+        },
+        "preview": {
+          "FIELD_ORDER": [
+            {
+              "position": 3,
+              "file1_field": "FIELD2",
+              "file2_field": "FIELD5"
+            },
+            {
+              "position": 6,
+              "file1_field": "FIELD5",
+              "file2_field": "FIELD2"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "case_id": "ТК3",
+  "notes": "Во втором файле есть лишняя строка с ключом 6.",
+  "runs": [
+    {
+      "name": "default",
+      "params": {
+        "key1": "KEY1"
+      },
+      "expected": {
+        "summary": {
+          "missing_rows_count": 0,
+          "extra_rows_count": 1,
+          "has_differences": true
+        },
+        "preview": {
+          "RECONCILIATION": [
+            {
+              "issue": "extra_in_file2",
+              "key": "6"
+            }
+          ],
+          "DETAILS": []
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "case_id": "ТК2",
+  "notes": "Во втором файле отсутствуют строки с ключами 1, 3 и 5.",
+  "runs": [
+    {
+      "name": "default",
+      "params": {
+        "key1": "KEY1"
+      },
+      "expected": {
+        "summary": {
+          "missing_rows_count": 3,
+          "extra_rows_count": 0,
+          "has_differences": true
+        },
+        "preview": {
+          "RECONCILIATION": [
+            {
+              "issue": "missing_in_file2",
+              "key": "1"
+            },
+            {
+              "issue": "missing_in_file2",
+              "key": "3"
+            },
+            {
+              "issue": "missing_in_file2",
+              "key": "5"
+            }
+          ],
+          "DETAILS": []
+        }
+      }
+    }
+  ]
+}

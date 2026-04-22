@@ -1,0 +1,94 @@
+{
+  "case_id": "ТК9",
+  "notes": "Содержимое совпадает по ключам, но расходится по значениям полей.",
+  "runs": [
+    {
+      "name": "default",
+      "params": {
+        "key1": "KEY1"
+      },
+      "expected": {
+        "summary": {
+          "data_differences_count": 12,
+          "has_differences": true
+        },
+        "preview": {
+          "DETAILS": [
+            {
+              "key": "1",
+              "field": "FIELD1",
+              "file1_value": "раз",
+              "file2_value": "1"
+            },
+            {
+              "key": "1",
+              "field": "FIELD3",
+              "file1_value": "T",
+              "file2_value": "F"
+            },
+            {
+              "key": "1",
+              "field": "FIELD5",
+              "file1_value": "шесть",
+              "file2_value": "шсть"
+            },
+            {
+              "key": "2",
+              "field": "FIELD1",
+              "file1_value": "два",
+              "file2_value": "2"
+            },
+            {
+              "key": "2",
+              "field": "FIELD3",
+              "file1_value": "F",
+              "file2_value": "T"
+            },
+            {
+              "key": "3",
+              "field": "FIELD1",
+              "file1_value": "три",
+              "file2_value": "3"
+            },
+            {
+              "key": "3",
+              "field": "FIELD3",
+              "file1_value": "T",
+              "file2_value": "F"
+            },
+            {
+              "key": "4",
+              "field": "FIELD1",
+              "file1_value": "четыре",
+              "file2_value": "4"
+            },
+            {
+              "key": "4",
+              "field": "FIELD3",
+              "file1_value": "F",
+              "file2_value": "T"
+            },
+            {
+              "key": "5",
+              "field": "FIELD1",
+              "file1_value": "пять",
+              "file2_value": "5"
+            },
+            {
+              "key": "5",
+              "field": "FIELD3",
+              "file1_value": "T",
+              "file2_value": "F"
+            },
+            {
+              "key": "5",
+              "field": "FIELD4",
+              "file1_value": "20260105",
+              "file2_value": "20260205"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

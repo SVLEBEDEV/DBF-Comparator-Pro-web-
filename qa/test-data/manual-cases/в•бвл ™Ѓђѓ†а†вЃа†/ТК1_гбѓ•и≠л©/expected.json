@@ -1,0 +1,37 @@
+{
+  "case_id": "ТК1",
+  "notes": "Полное совпадение без расхождений.",
+  "runs": [
+    {
+      "name": "default",
+      "params": {
+        "key1": "KEY1"
+      },
+      "expected": {
+        "summary": {
+          "file1_row_count": 5,
+          "file2_row_count": 5,
+          "common_field_count": 6,
+          "missing_fields_count": 0,
+          "extra_fields_count": 0,
+          "type_mismatches_count": 0,
+          "field_order_mismatches_count": 0,
+          "duplicate_keys_count_file1": 0,
+          "duplicate_keys_count_file2": 0,
+          "missing_rows_count": 0,
+          "extra_rows_count": 0,
+          "data_differences_count": 0,
+          "has_differences": false
+        },
+        "preview": {
+          "STRUCTURE": [],
+          "FIELD_ORDER": [],
+          "TYPES": [],
+          "DUPLICATES": [],
+          "RECONCILIATION": [],
+          "DETAILS": []
+        }
+      }
+    }
+  ]
+}

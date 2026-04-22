@@ -1,0 +1,52 @@
+{
+  "case_id": "ТК7",
+  "notes": "При одном ключе виден дубликат по KEY1=5, при двух ключах остается лишняя строка.",
+  "runs": [
+    {
+      "name": "single-key",
+      "params": {
+        "key1": "KEY1"
+      },
+      "expected": {
+        "summary": {
+          "duplicate_keys_count_file1": 0,
+          "duplicate_keys_count_file2": 1,
+          "extra_rows_count": 0,
+          "has_differences": true
+        },
+        "preview": {
+          "DUPLICATES": [
+            {
+              "file": "file2",
+              "key": "5",
+              "occurrences": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "composite-key",
+      "params": {
+        "key1": "KEY1",
+        "key2": "FIELD1"
+      },
+      "expected": {
+        "summary": {
+          "duplicate_keys_count_file1": 0,
+          "duplicate_keys_count_file2": 0,
+          "extra_rows_count": 1,
+          "has_differences": true
+        },
+        "preview": {
+          "RECONCILIATION": [
+            {
+              "issue": "extra_in_file2",
+              "key": "5 | шесть"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
