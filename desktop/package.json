@@ -1,0 +1,47 @@
+{
+  "name": "dbf-comparator-pro-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "main": "main.cjs",
+  "scripts": {
+    "dev": "electron .",
+    "start": "electron .",
+    "dist:win": "electron-builder --win nsis portable --x64"
+  },
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "pro.dbfcomparator.desktop",
+    "productName": "DBF Comparator Pro",
+    "files": [
+      "main.cjs",
+      "preload.cjs"
+    ],
+    "directories": {
+      "buildResources": "build"
+    },
+    "extraResources": [
+      {
+        "from": "../frontend/dist",
+        "to": "frontend"
+      },
+      {
+        "from": "../backend/dist",
+        "to": "backend"
+      },
+      {
+        "from": "../backend/.env.desktop",
+        "to": "backend/.env"
+      }
+    ],
+    "win": {
+      "artifactName": "${productName}-${version}-${arch}.${ext}",
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    }
+  }
+}

@@ -1,3 +1,5 @@
+import { getRuntimeConfig } from "./runtimeConfig";
+
 export type UploadedFileMeta = {
   name: string;
   size_bytes: number;
@@ -74,7 +76,8 @@ export type ComparisonPreviewResponse = {
   rows: PreviewRow[];
 };
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000/api/v1";
+const API_BASE =
+  getRuntimeConfig().apiBaseUrl ?? import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000/api/v1";
 
 export async function uploadComparisonFiles(file1: File, file2: File): Promise<UploadResponse> {
   const formData = new FormData();

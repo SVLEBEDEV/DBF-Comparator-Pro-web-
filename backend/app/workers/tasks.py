@@ -1,7 +1,5 @@
 from uuid import UUID
 
-from kombu.exceptions import OperationalError
-
 from app.core.config import get_settings
 from app.core.time import utc_now
 from app.db.session import SessionLocal
@@ -105,13 +103,6 @@ def process_comparison_job(job_id: str) -> None:
         raise
     finally:
         db.close()
-
-
-def enqueue_comparison_job(job_id: str) -> None:
-    try:
-        process_comparison_job.delay(job_id)
-    except Exception:  # noqa: BLE001
-        process_comparison_job.run(job_id)
 
 
 @celery_app.task(name="comparison.cleanup_expired")

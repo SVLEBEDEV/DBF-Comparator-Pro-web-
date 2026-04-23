@@ -6,6 +6,7 @@
 
 - `backend/`: upload, compare, preview, Excel report, cleanup, readiness, request-id logging и hourly cleanup scheduler.
 - `frontend/`: одноэкранный workflow с upload, polling, preview, report download и improved error states.
+- `desktop/`: Windows desktop shell для оффлайн-режима поверх существующих frontend/backend.
 - `docker-compose.yml`: pilot-окружение с `frontend`, `api`, `worker`, `postgres`, `redis`, `nginx`.
 - `docker-compose.prod.yml`: production-окружение для VPS с раздачей frontend через `nginx`.
 - `.github/workflows/ci.yml`: CI на backend и frontend.
@@ -29,12 +30,27 @@
 Коротко:
 
 1. Скопируйте `.env.production.example` в `.env.production`
-2. Заполните пароль БД и IP/домен
+2. Заполните пароль БД, домен и параметры `https`
 3. Выполните `docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build`
-4. Откройте `http://<server-ip>`
+4. Для production с доменом и сертификатом откройте `https://<your-domain>`
 
 ## Local Checks
 
 - Backend tests: `PYTHONPATH=backend backend/.venv/bin/pytest backend/tests -q`
 - Frontend tests: `cd frontend && npm test`
 - Frontend build: `cd frontend && npm run build`
+
+## Windows Desktop Offline
+
+Desktop-версия идёт как дополнение к web-версии и использует тот же UI, но локальный backend:
+
+- web production остаётся на `PostgreSQL + Redis + Celery`
+- desktop использует `sqlite` и `JOB_RUNNER=thread`
+- runtime-конфиг frontend получает из `Electron preload`, поэтому web и desktop могут жить параллельно
+
+Файлы для desktop-режима:
+
+- [backend/.env.desktop.example](/Users/thelebedevs/DBF Comparator PRO v2/backend/.env.desktop.example)
+- [desktop/main.cjs](/Users/thelebedevs/DBF Comparator PRO v2/desktop/main.cjs)
+- [desktop/preload.cjs](/Users/thelebedevs/DBF Comparator PRO v2/desktop/preload.cjs)
+- [desktop/README.md](/Users/thelebedevs/DBF Comparator PRO v2/desktop/README.md)

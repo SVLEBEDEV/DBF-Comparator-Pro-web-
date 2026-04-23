@@ -1,0 +1,87 @@
+name: Windows Desktop Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - "backend/**"
+      - "frontend/**"
+      - "desktop/**"
+      - ".github/workflows/windows-desktop.yml"
+
+jobs:
+  build-windows-desktop:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: |
+            frontend/package-lock.json
+            desktop/package-lock.json
+
+      - name: Install backend deps
+        shell: pwsh
+        run: |
+          python -m venv backend/.venv
+          backend/.venv/Scripts/python -m pip install --upgrade pip
+          backend/.venv/Scripts/python -m pip install -e "./backend[dev]"
+          backend/.venv/Scripts/python -m pip install pyinstaller
+
+      - name: Install frontend deps
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: frontend
+        env:
+          VITE_API_BASE_URL: http://127.0.0.1:18400/api/v1
+        run: npm run build
+
+      - name: Prepare desktop backend env
+        shell: pwsh
+        run: Copy-Item backend/.env.desktop.example backend/.env.desktop
+
+      - name: Build Windows backend executable
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path backend/dist | Out-Null
+          backend/.venv/Scripts/pyinstaller `
+            --noconfirm `
+            --clean `
+            --onefile `
+            --name dbf-comparator-backend `
+            backend/run_desktop.py
+
+      - name: Move backend executable into desktop bundle inputs
+        shell: pwsh
+        run: Copy-Item dist/dbf-comparator-backend.exe backend/dist/dbf-comparator-backend.exe -Force
+
+      - name: Install desktop deps
+        working-directory: desktop
+        run: npm ci
+
+      - name: Build Windows desktop executable
+        working-directory: desktop
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+        run: npm run dist:win
+
+      - name: Upload Windows desktop artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbf-comparator-pro-windows-desktop
+          path: |
+            desktop/dist/*.exe
+            desktop/dist/*.yml

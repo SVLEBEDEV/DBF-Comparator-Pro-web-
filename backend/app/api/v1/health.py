@@ -21,7 +21,8 @@ def readiness_check(db: Session = Depends(get_db)) -> dict[str, object]:
 
     try:
         checks["database"] = check_database(db)
-        checks["redis"] = check_redis(settings.redis_url)
+        if settings.enable_redis_checks:
+            checks["redis"] = check_redis(settings.redis_url)
         checks["storage"] = check_storage(settings.temp_storage_root)
     except Exception as exc:  # noqa: BLE001
         raise HTTPException(

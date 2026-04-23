@@ -15,7 +15,7 @@ from app.schemas.comparison import (
     PreviewRow,
 )
 from app.services.temp_storage import TempStorageService
-from app.workers.tasks import enqueue_comparison_job
+from app.workers.runner import enqueue_comparison_job
 
 
 class ComparisonJobService:

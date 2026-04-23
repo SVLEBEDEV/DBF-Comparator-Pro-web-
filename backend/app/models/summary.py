@@ -1,7 +1,6 @@
 import uuid
 
-from sqlalchemy import BigInteger, Boolean, ForeignKey, Integer
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import BigInteger, Boolean, ForeignKey, Integer, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.session import Base
@@ -10,7 +9,7 @@ from app.db.session import Base
 class ComparisonSummary(Base):
     __tablename__ = "comparison_summaries"
 
-    job_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("comparison_jobs.id"), primary_key=True)
+    job_id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), ForeignKey("comparison_jobs.id"), primary_key=True)
     file1_row_count: Mapped[int | None] = mapped_column(BigInteger)
     file2_row_count: Mapped[int | None] = mapped_column(BigInteger)
     common_field_count: Mapped[int | None] = mapped_column(Integer)

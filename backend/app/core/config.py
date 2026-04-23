@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     artifact_ttl_hours: int = 24
     cors_origins: list[str] = ["http://localhost:5173"]
     request_id_header: str = "X-Request-ID"
+    execution_mode: str = "web"
+    job_runner: str = "celery"
+    enable_redis_checks: bool = True
 
 
 @lru_cache(maxsize=1)

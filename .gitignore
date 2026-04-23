@@ -4,6 +4,11 @@ __pycache__/
 .mypy_cache/
 node_modules/
 dist/
+desktop/dist/
+desktop/release/
+desktop/resources/
+/build/
+dbf-comparator-backend.spec
 .DS_Store
 .coverage
 coverage/
@@ -15,6 +20,7 @@ coverage/
 *.tsbuildinfo
 *.egg-info/
 backend/.env
+backend/.env.desktop
 backend/local-dev.db
 backend/local-dev.sqlite
 frontend/.env
