@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "electron .",
     "start": "electron .",
-    "dist:win": "electron-builder --win nsis portable --x64"
+    "dist:win": "electron-builder --win nsis portable --x64",
+    "dist:mac:x64": "electron-builder --mac dmg zip --x64",
+    "dist:mac:arm64": "electron-builder --mac dmg zip --arm64"
   },
   "devDependencies": {
     "electron": "^35.0.0",
@@ -41,6 +43,14 @@
       "target": [
         "nsis",
         "portable"
+      ]
+    },
+    "mac": {
+      "artifactName": "${productName}-${version}-${arch}.${ext}",
+      "category": "public.app-category.business",
+      "target": [
+        "dmg",
+        "zip"
       ]
     }
   }

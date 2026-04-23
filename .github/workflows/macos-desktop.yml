@@ -1,0 +1,98 @@
+name: macOS Desktop Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - "backend/**"
+      - "frontend/**"
+      - "desktop/**"
+      - ".github/workflows/macos-desktop.yml"
+
+jobs:
+  build-macos-desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-13
+            arch: x64
+            dist_script: dist:mac:x64
+            artifact_name: dbf-comparator-pro-macos-intel
+          - runner: macos-14
+            arch: arm64
+            dist_script: dist:mac:arm64
+            artifact_name: dbf-comparator-pro-macos-apple-silicon
+
+    runs-on: ${{ matrix.runner }}
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: |
+            frontend/package-lock.json
+            desktop/package-lock.json
+
+      - name: Install backend deps
+        run: |
+          python -m venv backend/.venv
+          backend/.venv/bin/python -m pip install --upgrade pip
+          backend/.venv/bin/python -m pip install -e "./backend[dev]"
+          backend/.venv/bin/python -m pip install pyinstaller
+
+      - name: Install frontend deps
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: frontend
+        env:
+          VITE_API_BASE_URL: http://127.0.0.1:18400/api/v1
+        run: npm run build
+
+      - name: Prepare desktop backend env
+        run: cp backend/.env.desktop.example backend/.env.desktop
+
+      - name: Build macOS backend executable
+        run: |
+          mkdir -p backend/dist
+          backend/.venv/bin/pyinstaller \
+            --noconfirm \
+            --clean \
+            --onefile \
+            --name dbf-comparator-backend \
+            backend/run_desktop.py
+
+      - name: Move backend executable into desktop bundle inputs
+        run: cp dist/dbf-comparator-backend backend/dist/dbf-comparator-backend
+
+      - name: Install desktop deps
+        working-directory: desktop
+        run: npm ci
+
+      - name: Build macOS desktop app
+        working-directory: desktop
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+        run: npm run ${{ matrix.dist_script }}
+
+      - name: Upload macOS desktop artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: |
+            desktop/dist/*.dmg
+            desktop/dist/*.zip

@@ -40,13 +40,14 @@
 - Frontend tests: `cd frontend && npm test`
 - Frontend build: `cd frontend && npm run build`
 
-## Windows Desktop Offline
+## Desktop Offline
 
 Desktop-версия идёт как дополнение к web-версии и использует тот же UI, но локальный backend:
 
 - web production остаётся на `PostgreSQL + Redis + Celery`
 - desktop использует `sqlite` и `JOB_RUNNER=thread`
 - runtime-конфиг frontend получает из `Electron preload`, поэтому web и desktop могут жить параллельно
+- поддерживаются сборки под `Windows` и `macOS`
 
 Файлы для desktop-режима:
 
@@ -54,3 +55,5 @@ Desktop-версия идёт как дополнение к web-версии и
 - [desktop/main.cjs](/Users/thelebedevs/DBF Comparator PRO v2/desktop/main.cjs)
 - [desktop/preload.cjs](/Users/thelebedevs/DBF Comparator PRO v2/desktop/preload.cjs)
 - [desktop/README.md](/Users/thelebedevs/DBF Comparator PRO v2/desktop/README.md)
+- [windows-desktop.yml](/Users/thelebedevs/DBF Comparator PRO v2/.github/workflows/windows-desktop.yml)
+- [macos-desktop.yml](/Users/thelebedevs/DBF Comparator PRO v2/.github/workflows/macos-desktop.yml)

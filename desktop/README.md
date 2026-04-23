@@ -1,6 +1,6 @@
 # Desktop Runtime
 
-Этот каталог содержит оболочку `Electron` для полностью оффлайн Windows-версии.
+Этот каталог содержит оболочку `Electron` для полностью оффлайн desktop-версии под Windows и macOS.
 
 ## Что уже заложено
 
@@ -20,8 +20,19 @@
 
 ## Packaging
 
-Для production-сборки нужен отдельно упакованный Windows backend executable. В качестве entrypoint используется [backend/run_desktop.py](/Users/thelebedevs/DBF Comparator PRO v2/backend/run_desktop.py), а готовый файл должен лежать в `backend/dist/dbf-comparator-backend.exe`. После этого можно собрать desktop shell командой:
+Для production-сборки нужен отдельно упакованный backend executable. В качестве entrypoint используется [backend/run_desktop.py](/Users/thelebedevs/DBF Comparator PRO v2/backend/run_desktop.py).
 
 `cd /Users/thelebedevs/DBF Comparator PRO v2/desktop && npm install && npm run dist:win`
 
-На macOS можно подготовить проект и прогнать часть пайплайна, но полноценный Windows `.exe` backend корректно собирается в Windows-окружении. Для этого в репозиторий добавлен GitHub Actions workflow сборки desktop-версии.
+Команды для локальной сборки:
+
+- Windows: `npm run dist:win`
+- macOS Intel: `npm run dist:mac:x64`
+- macOS Apple Silicon: `npm run dist:mac:arm64`
+
+Ожидаемые backend binaries:
+
+- Windows: `backend/dist/dbf-comparator-backend.exe`
+- macOS: `backend/dist/dbf-comparator-backend`
+
+Для CI в репозиторий добавлены отдельные workflow для Windows и macOS desktop-сборок.
