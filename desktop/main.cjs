@@ -8,6 +8,16 @@ const UI_PORT = 18401;
 
 let backendProcess = null;
 
+function ensureDir(targetPath) {
+  fs.mkdirSync(targetPath, { recursive: true });
+  return targetPath;
+}
+
+function buildSqliteUrl(filePath) {
+  const normalized = filePath.split(path.sep).join("/");
+  return `sqlite:///${normalized.startsWith("/") ? "" : "/"}${normalized}`;
+}
+
 function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -80,22 +90,46 @@ function buildBackendEnv(envFile) {
     }
   }
 
+  const dataRoot = ensureDir(path.join(app.getPath("userData"), "runtime"));
+  const logsRoot = ensureDir(path.join(dataRoot, "logs"));
+  const backendRoot = ensureDir(path.join(dataRoot, "backend"));
+  const storageRoot = ensureDir(path.join(dataRoot, "storage"));
+
+  baseEnv.DATABASE_URL = buildSqliteUrl(path.join(backendRoot, "desktop-app.sqlite"));
+  baseEnv.TEMP_STORAGE_ROOT = storageRoot;
+  baseEnv.LOG_PATH = path.join(logsRoot, "backend.log");
   baseEnv.PORT = String(API_PORT);
   return baseEnv;
 }
 
 function startBackend() {
   const runtime = resolveBackendCommand();
+  const env = buildBackendEnv(runtime.envFile);
+  const logPath = env.LOG_PATH;
+  const logStream = fs.createWriteStream(logPath, { flags: "a" });
+
   backendProcess = spawn(runtime.command, runtime.args, {
     cwd: runtime.cwd,
-    env: buildBackendEnv(runtime.envFile),
-    stdio: "inherit"
+    env,
+    stdio: ["ignore", "pipe", "pipe"]
+  });
+
+  backendProcess.stdout.on("data", (chunk) => {
+    logStream.write(chunk);
+  });
+
+  backendProcess.stderr.on("data", (chunk) => {
+    logStream.write(chunk);
   });
 
   backendProcess.on("exit", (code) => {
+    logStream.end();
     backendProcess = null;
     if (code !== 0) {
-      dialog.showErrorBox("DBF Comparator Pro", `Local backend stopped with code ${code ?? "unknown"}.`);
+      dialog.showErrorBox(
+        "DBF Comparator Pro",
+        `Local backend stopped with code ${code ?? "unknown"}.\n\nLog: ${logPath}`,
+      );
     }
   });
 }

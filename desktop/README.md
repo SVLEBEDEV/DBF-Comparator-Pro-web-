@@ -7,6 +7,7 @@
 - приложение поднимает локальный backend на `127.0.0.1:18400`
 - фронтенд читает runtime API URL из `preload`
 - desktop backend рассчитан на `sqlite` и локальный потоковый runner без `Redis`
+- runtime данные desktop backend сохраняются в пользовательскую директорию приложения, а не в app bundle
 - веб-версия остаётся отдельной и не меняет свой production flow
 
 ## Dev-режим
@@ -36,3 +37,5 @@
 - macOS: `backend/dist/dbf-comparator-backend`
 
 Для CI в репозиторий добавлены отдельные workflow для Windows и macOS desktop-сборок.
+
+Если локальный backend не стартует, desktop shell показывает путь к лог-файлу backend. На macOS он будет лежать внутри `~/Library/Application Support/<app name>/runtime/logs/backend.log`.
