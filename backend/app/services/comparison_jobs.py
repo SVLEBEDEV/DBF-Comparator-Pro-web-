@@ -1,4 +1,5 @@
 from uuid import UUID
+from pathlib import Path
 
 from sqlalchemy.orm import Session
 
@@ -128,8 +129,12 @@ class ComparisonJobService:
             raise LookupError("Задание не найдено.")
         artifact = self.repository.get_artifact(job_id=job_id, artifact_type="preview_json")
         if artifact is None:
-            raise LookupError("Preview для задания недоступен.")
-        payload = self.storage.read_json(artifact.storage_path)
+            artifact_path = self._find_preview_fallback(job_id)
+            if artifact_path is None:
+                raise LookupError("Preview для задания недоступен.")
+            payload = self.storage.read_json(artifact_path)
+        else:
+            payload = self.storage.read_json(artifact.storage_path)
         section_rows = payload.get(section, []) if isinstance(payload, dict) else []
         page = section_rows[offset : offset + limit]
         return ComparisonPreviewResponse(
@@ -140,6 +145,13 @@ class ComparisonJobService:
             total=len(section_rows),
             rows=[PreviewRow(values=row) for row in page],
         )
+
+    def _find_preview_fallback(self, job_id: UUID) -> str | None:
+        pattern = f"{job_id}-preview-*.json"
+        matches = sorted(Path(self.settings.temp_storage_root).glob(pattern), key=lambda item: item.stat().st_mtime, reverse=True)
+        if not matches:
+            return None
+        return str(matches[0])
 
     def cleanup_job(self, *, job_id: UUID) -> DeleteComparisonResponse:
         job = self.repository.get_job(job_id)
