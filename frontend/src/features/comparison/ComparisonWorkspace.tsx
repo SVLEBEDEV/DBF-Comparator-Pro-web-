@@ -38,8 +38,26 @@ type CategoryRow = {
 };
 
 const DEFAULT_CATEGORY = "data_differences";
+const THEME_STORAGE_KEY = "dbf-comparator-theme";
+type AppTheme = "light" | "dark";
 
 export function ComparisonWorkspace() {
+  const [theme, setTheme] = useState<AppTheme>(() => {
+    if (typeof window === "undefined") {
+      return "light";
+    }
+    try {
+      const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+      if (storedTheme === "light" || storedTheme === "dark") {
+        return storedTheme;
+      }
+    } catch {
+      return "light";
+    }
+    return typeof window.matchMedia === "function" && window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  });
   const [files, setFiles] = useState<UploadState>(initialUploadState);
   const [uploadResult, setUploadResult] = useState<UploadResponse | null>(null);
   const [key1, setKey1] = useState("");
@@ -99,6 +117,15 @@ export function ComparisonWorkspace() {
     ].join(":");
   }, [files]);
   const [lastUploadedSignature, setLastUploadedSignature] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    try {
+      window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch {
+      // The active theme still works when storage is unavailable.
+    }
+  }, [theme]);
 
   const categoryRows = useMemo<CategoryRow[]>(() => {
     const summary = comparisonStatus?.summary;
@@ -533,8 +560,26 @@ export function ComparisonWorkspace() {
 
   return (
     <main className="workspace-shell">
+      <button
+        className="theme-toggle"
+        type="button"
+        aria-label={theme === "dark" ? "Включить светлую тему" : "Включить ночную тему"}
+        aria-pressed={theme === "dark"}
+        onClick={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
+      >
+        <span className="theme-toggle__track" aria-hidden="true">
+          <svg className="theme-toggle__icon" viewBox="0 0 24 24" focusable="false">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6" />
+          </svg>
+          <span className="theme-toggle__thumb" />
+          <svg className="theme-toggle__icon" viewBox="0 0 24 24" focusable="false">
+            <path d="M18.2 14.2A6.8 6.8 0 0 1 9.8 5.8a7 7 0 1 0 8.4 8.4Z" />
+          </svg>
+        </span>
+      </button>
       <section className="hero">
-        <div>
+        <div className="hero__content">
           <p className="eyebrow">DBF Comparator Pro</p>
           <h1>Строгая сверка DBF-файлов для внутреннего контура</h1>
           <p className="hero__copy">
@@ -542,8 +587,10 @@ export function ComparisonWorkspace() {
             без нормализации значений.
           </p>
         </div>
-        <div className="warning-banner">
-          <strong>Важно:</strong> скрытые символы, пробелы и другие невидимые различия будут участвовать в проверке.
+        <div className="hero__side">
+          <div className="warning-banner">
+            <strong>Важно:</strong> скрытые символы, пробелы и другие невидимые различия будут участвовать в проверке.
+          </div>
         </div>
       </section>
 
@@ -784,6 +831,10 @@ export function ComparisonWorkspace() {
                       selectedCategory === row.id ? "categories-table__row--active" : ""
                     }`}
                     onClick={() => {
+                      if (selectedCategory === row.id) {
+                        setPreviewOffset(0);
+                        return;
+                      }
                       setSelectedCategory(row.id);
                       setPreviewOffset(0);
                       setPreview(null);

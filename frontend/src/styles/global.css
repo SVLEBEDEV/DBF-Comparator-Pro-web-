@@ -9,10 +9,69 @@
   --accent: #0057ab;
   --accent-strong: #00478d;
   --accent-soft: #eef5fc;
+  --accent-on: #ffffff;
   --success: #188252;
   --danger: #d05640;
   --warning-bg: #f5f8fb;
+  --body-bg:
+    radial-gradient(circle at top left, rgba(0, 87, 171, 0.12), transparent 24%),
+    radial-gradient(circle at top right, rgba(31, 113, 197, 0.08), transparent 18%),
+    linear-gradient(180deg, #f9fcff 0%, #eff5fb 100%);
+  --ambient-bg:
+    radial-gradient(circle at 15% 15%, rgba(0, 87, 171, 0.08), transparent 20%),
+    radial-gradient(circle at 85% 12%, rgba(0, 87, 171, 0.04), transparent 16%);
+  --panel-bg: rgba(255, 255, 255, 0.94);
+  --control-bg: #ffffff;
+  --control-gradient: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  --table-head-bg: #f4f8fc;
+  --row-bg: #fbfdff;
+  --summary-divider: rgba(217, 221, 214, 0.75);
+  --accent-gradient: linear-gradient(135deg, var(--accent) 0%, #1f71c5 100%);
+  --theme-toggle-bg: rgba(255, 255, 255, 0.94);
+  --theme-track-bg: #eaf3fc;
+  --theme-thumb-bg: #ffffff;
+  --theme-icon: #6a7f96;
+  --theme-icon-active: #0057ab;
+  --theme-moon-active: #f4a62a;
   --shadow: 0 14px 32px rgba(0, 45, 92, 0.08);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0b1118;
+  --surface: #111a24;
+  --surface-strong: #162231;
+  --text: #edf5ff;
+  --muted: #a6b5c7;
+  --border: #2a3a4e;
+  --accent: #69bfff;
+  --accent-strong: #a5dcff;
+  --accent-soft: rgba(105, 191, 255, 0.12);
+  --accent-on: #07111b;
+  --success: #56cf8b;
+  --danger: #ff8b77;
+  --warning-bg: rgba(255, 191, 105, 0.1);
+  --body-bg:
+    radial-gradient(circle at 9% 0%, rgba(105, 191, 255, 0.16), transparent 28%),
+    radial-gradient(circle at 92% 8%, rgba(88, 211, 170, 0.1), transparent 24%),
+    linear-gradient(180deg, #090e14 0%, #101822 48%, #0b1118 100%);
+  --ambient-bg:
+    radial-gradient(circle at 18% 16%, rgba(105, 191, 255, 0.08), transparent 22%),
+    radial-gradient(circle at 84% 12%, rgba(88, 211, 170, 0.06), transparent 18%);
+  --panel-bg: rgba(17, 26, 36, 0.9);
+  --control-bg: #162231;
+  --control-gradient: linear-gradient(180deg, #172535 0%, #121b27 100%);
+  --table-head-bg: #111a24;
+  --row-bg: rgba(22, 34, 49, 0.92);
+  --summary-divider: rgba(42, 58, 78, 0.82);
+  --accent-gradient: linear-gradient(135deg, #69bfff 0%, #58d3aa 100%);
+  --theme-toggle-bg: rgba(17, 26, 36, 0.94);
+  --theme-track-bg: #0f1722;
+  --theme-thumb-bg: #243449;
+  --theme-icon: #73859b;
+  --theme-icon-active: #edf5ff;
+  --theme-moon-active: #f4c45f;
+  --shadow: 0 18px 44px rgba(0, 0, 0, 0.34);
 }
 
 * {
@@ -23,12 +82,10 @@ body {
   margin: 0;
   min-width: 320px;
   font-size: 80%;
-  background:
-    radial-gradient(circle at top left, rgba(0, 87, 171, 0.12), transparent 24%),
-    radial-gradient(circle at top right, rgba(31, 113, 197, 0.08), transparent 18%),
-    linear-gradient(180deg, #f9fcff 0%, #eff5fb 100%);
+  background: var(--body-bg);
   color: var(--text);
   font-family: "Manrope", "IBM Plex Sans", sans-serif;
+  transition: background 180ms ease, color 180ms ease;
 }
 
 button,
@@ -41,6 +98,7 @@ select {
   max-width: 1340px;
   margin: 0 auto;
   padding: 32px 20px 48px;
+  position: relative;
 }
 
 .workspace-shell::before {
@@ -48,9 +106,7 @@ select {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background:
-    radial-gradient(circle at 15% 15%, rgba(0, 87, 171, 0.08), transparent 20%),
-    radial-gradient(circle at 85% 12%, rgba(0, 87, 171, 0.04), transparent 16%);
+  background: var(--ambient-bg);
 }
 
 .hero {
@@ -59,6 +115,17 @@ select {
   grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.72fr);
   align-items: start;
   margin-bottom: 22px;
+}
+
+.hero__content,
+.hero__side {
+  position: relative;
+}
+
+.hero__side {
+  display: grid;
+  gap: 14px;
+  padding-top: 60px;
 }
 
 .hero h1,
@@ -95,14 +162,99 @@ select {
 .panel {
   border: 1px solid var(--border);
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.94);
+  background: var(--panel-bg);
   box-shadow: var(--shadow);
   backdrop-filter: blur(12px);
+  transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
 .warning-banner {
   padding: 16px 18px;
   background: var(--warning-bg);
+  width: 100%;
+}
+
+.theme-toggle {
+  position: absolute;
+  top: 32px;
+  right: 20px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 78px;
+  height: 42px;
+  padding: 4px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--theme-icon);
+  box-shadow: none;
+  cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-1px);
+}
+
+.theme-toggle__track {
+  position: relative;
+  width: 68px;
+  height: 32px;
+  border-radius: 999px;
+  background: var(--theme-track-bg);
+}
+
+.theme-toggle__thumb {
+  position: absolute;
+  top: 4px;
+  left: 7px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--theme-thumb-bg);
+  box-shadow: 0 3px 10px rgba(0, 45, 92, 0.18);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+[data-theme="dark"] .theme-toggle__thumb {
+  transform: translateX(30px);
+  box-shadow: 0 0 18px rgba(105, 191, 255, 0.18);
+}
+
+.theme-toggle__icon {
+  position: absolute;
+  top: 8px;
+  z-index: 1;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: color 180ms ease, opacity 180ms ease;
+}
+
+.theme-toggle__icon:first-child {
+  left: 11px;
+}
+
+.theme-toggle__icon:last-child {
+  right: 10.5px;
+}
+
+.theme-toggle__icon:first-child,
+[data-theme="dark"] .theme-toggle__icon:last-child {
+  color: var(--theme-moon-active);
+  opacity: 1;
+}
+
+.theme-toggle__icon:last-child,
+[data-theme="dark"] .theme-toggle__icon:first-child {
+  color: var(--theme-icon);
+  opacity: 0.78;
 }
 
 .workspace-grid {
@@ -233,7 +385,7 @@ select {
 
 .toggle-card {
   padding: 14px;
-  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  background: var(--control-gradient);
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   min-height: 128px;
@@ -289,7 +441,7 @@ select {
 }
 
 .toggle-switch input:checked + .toggle-switch__slider {
-  background: linear-gradient(135deg, var(--accent) 0%, #1f71c5 100%);
+  background: var(--accent-gradient);
 }
 
 .toggle-switch input:checked + .toggle-switch__slider::after {
@@ -328,7 +480,7 @@ select {
 
 .button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(0, 87, 171, 0.14);
+  box-shadow: var(--shadow);
 }
 
 .button:disabled {
@@ -339,12 +491,12 @@ select {
 
 .button--primary {
   background: var(--accent);
-  color: white;
+  color: var(--accent-on);
 }
 
 .button--primary-alt {
-  background: linear-gradient(135deg, var(--accent) 0%, #1f71c5 100%);
-  color: white;
+  background: var(--accent-gradient);
+  color: var(--accent-on);
 }
 
 .button--secondary {
@@ -389,7 +541,7 @@ select {
   justify-content: space-between;
   gap: 12px;
   padding: 8px 0;
-  border-bottom: 1px solid rgba(217, 221, 214, 0.75);
+  border-bottom: 1px solid var(--summary-divider);
 }
 
 .summary-list span {
@@ -478,14 +630,14 @@ select {
 
 .categories-table__row {
   padding: 12px 14px;
-  border: 1px solid rgba(215, 228, 241, 0.95);
+  border: 1px solid var(--border);
   border-radius: 14px;
-  background: #fbfdff;
+  background: var(--row-bg);
 }
 
 .categories-table__row--button {
   width: 100%;
-  border: 1px solid rgba(215, 228, 241, 0.95);
+  border: 1px solid var(--border);
   text-align: left;
   cursor: pointer;
   transition: border-color 140ms ease, background-color 140ms ease, box-shadow 140ms ease;
@@ -534,7 +686,7 @@ select {
 .preview-table th,
 .preview-table td {
   padding: 10px 12px;
-  border-bottom: 1px solid rgba(215, 228, 241, 0.9);
+  border-bottom: 1px solid var(--border);
   text-align: center;
   vertical-align: top;
   font-size: 0.92rem;
@@ -543,7 +695,7 @@ select {
 .preview-table th {
   position: sticky;
   top: 0;
-  background: #f4f8fc;
+  background: var(--table-head-bg);
   font-family: "Manrope", sans-serif;
   color: var(--accent-strong);
   text-align: center;
@@ -571,7 +723,7 @@ select {
 }
 
 .action-panel {
-  background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+  background: var(--control-gradient);
 }
 
 .action-panel h2,
@@ -611,6 +763,15 @@ select {
 
   .workspace-shell {
     padding: 28px 16px 48px;
+  }
+
+  .theme-toggle {
+    top: 18px;
+    right: 16px;
+  }
+
+  .hero__side {
+    padding-top: 0;
   }
 
   .preview-table {
